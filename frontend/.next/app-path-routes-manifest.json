@@ -1,0 +1,12 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/awards/page": "/awards",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/",
+  "/page_test/page": "/page_test",
+  "/projects/[projectId]/page": "/projects/[projectId]",
+  "/projects/page": "/projects",
+  "/users/create/page": "/users/create",
+  "/users/page": "/users",
+  "/users/signup/page": "/users/signup"
+}

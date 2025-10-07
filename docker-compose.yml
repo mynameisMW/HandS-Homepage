@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend         # 백엔드 Dockerfile이 있는 경로
+      dockerfile: Dockerfile
+    container_name: hands-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app           # 코드 수정 시 자동 반영 (개발용)
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - hands-network
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: ./frontend        # 프론트엔드 Dockerfile이 있는 경로
+      dockerfile: Dockerfile
+    container_name: hands-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      # Next.js에서 백엔드 주소 참조할 환경 변수
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+    depends_on:
+      - backend
+    networks:
+      - hands-network
+    env_file:
+      - .env
+
+networks:
+  hands-network:
+    driver: bridge
