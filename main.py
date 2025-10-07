@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from api import login, verify_router
+from api import login, verify_router, announcement, projects
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -14,7 +14,8 @@ app.add_middleware(
 
 app.include_router(login.router)
 app.include_router(verify_router.router)
-
+app.include_router(announcement.router)
+app.include_router(projects.router)
 
 @app.get("/")
 def read_root():

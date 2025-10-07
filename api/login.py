@@ -2,7 +2,7 @@ import sqlite3
 import bcrypt
 import jwt
 import datetime
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
@@ -49,7 +49,7 @@ def _create_user(create_user_request: CreateUserRequest):
     except sqlite3.IntegrityError:
         return {"error":"id already exists."}
 
-@router.post("/user/read")
+@router.get("/user/read")
 def _read_user(id):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM users WHERE id=?", (id,))
@@ -59,7 +59,7 @@ def _read_user(id):
     else:
         return "User not found."
 
-@router.post("/user/read_all")
+@router.get("/user/read_all")
 def _get_all_users():
     cursor = conn.cursor()
     cursor.execute("""
@@ -69,6 +69,7 @@ def _get_all_users():
             ORDER BY id ASC
         """)    
     rows = cursor.fetchall()
+    print(rows)
     return [{"id": row[0], "username": row[1], "email": row[2]} for row in rows]
 
 @router.post("/user/edit")
@@ -86,8 +87,9 @@ def _edit_user(login_request: LoginRequest, new_password: str = None):
     conn.commit()
     return "User updated."
 
-@router.post("/user/delete")
-def _delete_user(id):
+@router.delete("/user/delete")
+def _delete_user(id_request: Request):
+    id = id_request.path_params.get("id")
     cursor = conn.cursor()
     cursor.execute("DELETE FROM users WHERE id=?", (id,))
     conn.commit()

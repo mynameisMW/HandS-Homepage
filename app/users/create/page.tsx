@@ -1,13 +1,27 @@
 "use client";
+import Link from "next/link";
 import { useState, useEffect, use } from "react";
+import Verify from "../../verify";
 
 import { useRouter } from "next/navigation";
+import { verify } from "crypto";
 
 const API_BASE = "http://127.0.0.1:8000";
 
 export default function Users() {
     const router = useRouter();
     const [users, setUsers] = useState([] as any[]);
+
+    async function checkVerify() {
+            const verifyResult = await Verify();
+            if (verifyResult.role !== "admin") {
+                alert("관리자만 접근할 수 있습니다.");
+                router.push("/");
+            }
+        }
+    useEffect(() => {
+        checkVerify();
+    }, []);
 
     function createUser(id: string, password: string, username: string, email: string) {
         fetch(`${API_BASE}/user/create`, {
@@ -25,13 +39,12 @@ export default function Users() {
             })
             .then(() => {
                 setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
-                alert("회원 생성이 완료되었습니다.");
-                window.location.href = "/";
-              })
+            })
             .catch((error) => {
                 console.error("Error deleting user:", error);
             });
     }
+
 
     return (
         <div className="p-8">
